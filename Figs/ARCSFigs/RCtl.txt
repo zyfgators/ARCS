@@ -1,0 +1,30 @@
+仿真终止：到达目标位置（时间：1289.4s）
+
+开始保存科研数据... 控制模式：CtrlMode=2
+数据保存完成：ResilenceCtrlSimData_C2.mat
+
+=== 仿真关键事件统计（CtrlMode=2） ===
+无人机1：进入干扰区12次，离开12次
+无人机2：进入干扰区4次，离开4次
+无人机3：进入干扰区16次，离开16次
+无人机4：进入干扰区4次，离开4次
+无人机5：进入干扰区6次，离开6次
+STCL激活：6次
+控制触发：2445次
+总有效载荷范围：[18.93, 30.00]
+综合韧性指标范围：[0.000, 7.407]
+=== UAV Swarm Trajectory Research Plotting (Mode: full) ===
+Loading research plotting data...
+Plotting interference field background...
+Plotting UAV trajectories...
+Plotting key time point formations...
+Plotting completed! Current range: X[-6,56], Y[-6,46]
+自动缩放完成！
+Loading data file: F:\5. 无人机集群控制与仿真\韧性控制\writing\RESSSubmission\251227RevSub\Program\Results\ResilenceCtrlSimData_C2.mat
+Data loading completed! Time range: 0.1s to 1289.4s
+Display Configuration:
+  - First Entry: 1027.4s | Last Exit: 1149.7s
+  - Time Offset: -20.0s | Display Range: 1007.4s to 1149.7s
+Preprocessing data...
+Generating resilience index plots...
+Plotting completed!
