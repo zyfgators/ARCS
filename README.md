@@ -4,7 +4,7 @@
 
 **Defining a General Research Paradigm for Swarm Survivability and Mission Collaboration in Hostile Environments**
 
-> **[English Document]** | **[中文文档]**
+> **[English Document](./README.md)** | **[Chinese Document](./README_CN.md)**
 > **Official Implementation**: The paper "Active Resilience Control for UAV Swarms: A Closed-Loop Framework Integrating Collaborative Perception and Dynamic Metrics" (Submitted to *Reliability Engineering & System Safety*).
 
 ---
@@ -129,23 +129,16 @@ ARCS employs a modular design, precisely mapping the paper's algorithms to the g
 
 This section details the engineering implementation of the ARCS core modules, strictly following the **"Perception-Metric-Control"** closed-loop theoretical framework.
 
-### 3.1 Simulation Engine Architecture: Closed-Loop Scheduling
+### 3.1 Simulation Engine Architecture: Closed-Loop Scheduling Mechanism
+**Core Module:** ResilenceSim.m (Simulation Engine)
 
-**Core Module**: `ResilenceSim.m` (Simulation Engine)
+ResilenceSim.m is the core scheduler of the entire simulation system, coordinating data exchange among sub-modules.
 
-`ResilenceSim.m` is the core scheduler. It maintains the global clock and coordinates data exchange between sub-modules within each Time Step.
+System Dataflow Diagram:
 
-**System Dataflow**:
+<div align="center"> <img src="assets/systemFlowchart_EN.png" width="80%" alt="systemDataflow">
 
-<div align="center">
-<img src="assets/system_flowchart.png" width="80%" alt="System Dataflow">
-
-
-
-
-
-<em>Fig 3.1: ARCS Simulation Engine Closed-Loop Dataflow</em>
-</div>
+<em>Figure 4: ARCS Simulation Engine System Flowchart</em> </div>
 
 ### 3.2 Collaborative Perception Layer: STCL-NN Module
 
@@ -250,21 +243,25 @@ Evaluates STCL-NN localization accuracy under high noise.
 
 * **Conclusion**: Validates the **"Cooperative Gain"** mechanism. As nodes increase, STCL-NN leverages spatial diversity to suppress noise, converging error to  km.
 
-<div align="center">
-<img src="assets/exp01fig01.png" width="600px" alt="Perception Result">
+<div align="center"> <img src="assets/exp01Fig01.png" width="600px" alt="Perception Result">
 
 
+<em>Figure 5: Comparison of Interference Source Localization Results</em> </div>
 
-
-
-<em>Fig 4.1: Comparison of Interference Source Localization Results</em>
-</div>
 
 ### 4.2 Experiment 2: Dynamic Resilience Measurement Verification
 
 **Command**: `Main('exp02', true)`
 
 Validates the fidelity and predictive capability of the Damage Dynamics model.
+
+<div align="center"> <img src="assets/exp01Fig02A.png" width="600px" alt="Perception Result">
+
+
+<em>Figure 6: Correlation between various confidence indicators and localization error</em> </div> <div align="center"> <img src="assets/exp02Fig02B.png" width="600px" alt="Perception Result">
+
+
+<em>Figure 7: Real-time predictive measurement of mission resilience</em> </div>
 
 * **Conclusion**: The predictive indicator  provides early warning of degradation risks and sensitively reflects survival potential improvements from heading adjustments, demonstrating **"Forward-looking"** assessment capabilities.
 
@@ -279,15 +276,45 @@ Validates the fidelity and predictive capability of the Damage Dynamics model.
 | `'exp03fig03'` | ** Control** | 📉 **Oscillation** | Proves global metric feedback causes gradient coupling. |
 | `'exp03fig04'` | **PMP- (Ours)** | ✅ **Optimal Balance** | Achieves **Pareto Optimality** between efficacy and resilience. |
 
-<div align="center">
-<img src="assets/benchmark_comparison.png" width="800px" alt="Control Strategy Comparison">
-
-
-
-
-
-<em>Fig 4.3: Comparison of Trajectories and Payload Curves under Different Strategies</em>
+The flight trajectories and mission resilience performance indicators of various control strategies are shown in Figures 8~11. 
+For details, please refer to the foundational paper [1].
+<div align="center"><img src="assets/exp02Fig02B.png" width="600px" alt="Perception Result">
+    <em>Figure 8: No control experiment results (high efficiency but severe payload loss). 
+Vertical and horizontal red dashed lines indicate swarm entry time and mission requirement baseline respectively.</em>
 </div>
+
+<div align="center"><img src="assets/exp03Fig02AB.png" width="600px" alt="Perception Result">
+    <em>Figure 9: APF autonomous interference avoidance results (high safety cost and excessive maneuvering). 
+Vertical and horizontal red dashed lines indicate swarm entry time and mission requirement baseline respectively.</em>
+</div>
+
+<div align="center"><img src="assets/exp03Fig03AB.png" width="600px" alt="Perception Result">
+    <em>Figure 10: Active elastic optimal control results based on $R(t)$ (control oscillation and insufficient payload protection). 
+Vertical and horizontal red dashed lines indicate swarm entry time and mission requirement baseline respectively.</em>
+</div>
+
+<div align="center"><img src="assets/exp03Fig04AB.png" width="600px" alt="Perception Result">
+    <em>Figure 11: Active elastic optimal control results based on $\sigma(t)$ (optimal balance of smoothness, payload and efficiency). 
+Vertical and horizontal red dashed lines indicate swarm entry time and mission requirement baseline respectively.</em>
+</div>
+
+The table below compares and analyzes the four control strategies from multiple dimensions: mission completion time, payload variation, 
+control strategy trigger times, and mission resilience indicator satisfaction.
+The experimental results show that the proposed strategy achieves the highest effective payload lower limit (21.77) and the lowest number of control triggers (867).
+Crucially, it maintains a relatively short mission completion time (1294.7 s), only 1.25% longer than the theoretical lower bound (no control).
+This verifies the core logic of our framework:By accurately regulating the dynamic performance factor $\sigma(t)$ as a real-time controlled variable, 
+the system implicitly ensures that the comprehensive elasticity $R(t)$ remains above the safety baseline $R^\*$ throughout the mission.
+This confirms that the control anchored on $\sigma(t)$ successfully achieves **the trade-off optimization between "resilience demand" and "control efficiency"**, 
+realizing high mission resilience at marginal efficiency cost.
+
+Table: Comparison of Key Performance Indicators of Four Control Strategies
+
+| Control Strategy | Mission Completion Time (s) | Effective Payload Range | Control Trigger Times | $R(t) \ge R^\*$ Satisfaction Rate |
+| :--- | :---: | :---: | :---: | :---: |
+| No Control | 1278.7 | [14.73, 30.00] | 0 | 0% |
+| APF Control | 1321.9 | [27.88, 30.00] | 2416 | 100% |
+| $R(t)$ Control | 1293.2 | [18.28, 30.00] | 2279 | 40% |
+| $\sigma(t)$ Control (Proposed) | 1294.7 | [21.77, 30.00] | 867 | 100% |
 
 ---
 

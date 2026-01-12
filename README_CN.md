@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green)](https://opensource.org/licenses/MIT)
 [![Paper](https://img.shields.io/badge/Status-Under--Review-orange)]()
 
-> **[English Document]** | **[中文文档]**
+> **[English Document](./README.md)** | **[Chinese Document](./README_CN.md)**
 >
 > **官方实现**: 论文 "Active Resilience Control for UAV Swarms: A Closed-Loop Framework Integrating Collaborative Perception and Dynamic Metrics" (已投稿至 *Reliability Engineering & System Safety*).
 
@@ -85,7 +85,7 @@ ARCS 内置了论文中经典的"集群穿越与搜索"任务场景：
 <div align="center">
   <img src="assets/dilemma_diagram_CN.jpg" width="600px" alt="Decision Dilemma">
   <br>
-  <em>图 2.1：未知干扰环境下的典型决策困境</em>
+  <em>图 2：未知干扰环境下的典型决策困境</em>
 </div>
 
 <br>
@@ -101,7 +101,7 @@ ARCS 采用模块化设计，将论文算法精准映射到通用框架中（如
 <div align="center">
      <img src="./assets/algImplement.png" width="800px" alt="Implementation Architecture">
      <br>
-     <em>图 2：从 STCL-NN 干扰感知到 PMP 韧性控制的典范实例原理图</em> 
+     <em>图 3：从 STCL-NN 干扰感知到 PMP 韧性控制的典范实例原理图</em> 
 </div>
 
 **代码文件组织结构 (File Organization):**
@@ -119,7 +119,6 @@ ARCS 采用模块化设计，将论文算法精准映射到通用框架中（如
 └── Figs/                   % [图表仓] 存放生成的 .fig 图片
 
 ```
-
 ---
 
 ## 🧩 3. 核心算法详解与源码映射 (Core Algorithms & Implementation)
@@ -135,13 +134,9 @@ ARCS 采用模块化设计，将论文算法精准映射到通用框架中（如
 **系统运行流程图 (System Dataflow)**:
 
 <div align="center">
-<img src="assets/system_flowchart.png" width="80%" alt="System Dataflow">
-
-
-
-
-
-<em>Fig 3.1: ARCS 仿真引擎闭环数据流图 (Simulation Engine Architecture)</em>
+    <img src="assets/systemFlowchart_CN.png" width="80%" alt="systemDataflow">
+    <br>
+    <em>图4: ARCS仿真引擎系统运行流程图 (ARCS Simulation Engine Architecture)</em>
 </div>
 
 ### 3.2 协同感知层：STCL-NN 模块实现
@@ -260,21 +255,27 @@ ARCS 提供了标准化的实验集，代码集成了论文第 4 章的全流程
 * **结论**: 验证了 **"协同增益"** 机制。随着接入节点增加，STCL-NN 利用空间多样性有效抑制噪声，最终误差收敛至  km。
 
 <div align="center">
-<img src="assets/exp01fig01.png" width="600px" alt="Perception Result">
-
-
-
-
-
-<em>Fig 4.1: 干扰源定位结果对比</em>
+    <img src="assets/exp01Fig01.png" width="600px" alt="Perception Result">
+    <br>
+    <em>图5: 干扰源定位结果对比</em>
 </div>
 
 ### 4.2 实验二：动态韧性度量验证 (Dynamic Resilience Measurement)
 
 **运行指令**: `Main('exp02', true)`
 
-验证损伤动力学模型的保真度及预测能力。
+验证损伤动力学模型的保真度及预测能力。各项指标实验结果如图6所示：
+<div align="center">
+    <img src="assets/exp01Fig02A.png" width="600px" alt="Perception Result">
+    <br>
+    <em>图6: 各项置信度指标与定位误差的相关性</em>
+</div>
 
+<div align="center">
+    <img src="assets/exp02Fig02B.png" width="600px" alt="Perception Result">
+    <br>
+    <em>图7: 任务韧性的实时预测性度量</em>
+</div>
 * **结论**: 预测指标  能够提前预警退化风险，并敏锐反映航向调整带来的生存潜力提升，具备**"前瞻性"**评估能力。
 
 ### 4.3 实验三：韧性控制策略对比 (Control Strategy Comparison)
@@ -285,18 +286,48 @@ ARCS 提供了标准化的实验集，代码集成了论文第 4 章的全流程
 | --- | --- | --- | --- |
 | `'exp03fig01'` | **无控制** | ⏱️ 最快 / 📉 **任务失败** | 证明了"效率优先"会导致系统能力崩溃。 |
 | `'exp03fig02'` | **APF** | 🛡️ 载荷完好 / ⚡ **剧烈抖动** | 证明了局部避障过于保守，严重牺牲效率。 |
-| `'exp03fig03'` | ** 控制** | 📉 **控制振荡** | 证明直接反馈全局指标会导致梯度耦合问题。 |
-| `'exp03fig04'` | **PMP- (本文)** | ✅ **最优平衡** | 实现了效能与韧性的 **帕累托最优**。 |
+| `'exp03fig03'` | **基于R(t)的韧性控制** | 📉 **控制振荡** | 证明直接反馈全局指标会导致梯度耦合问题。 |
+| `'exp03fig04'` | **基于$\sigma(t)$的韧性控制** | ✅ **最优平衡** | 实现了效能与韧性的 **帕累托最优**。 |
+
+各种控制策略的飞行轨迹图和任务韧性性能指标可参见图8~图11，详情可参见基础论文[1]。
+<div align="center">
+    <img src="assets/exp02Fig02B.png" width="600px" alt="Perception Result">
+    <br>
+    <em>图8: 无控制实验结果（高效率但严重载荷损失）。垂直和水平红色虚线分别表示集群进入时间和任务需求基线。</em>
+</div>
 
 <div align="center">
-<img src="assets/benchmark_comparison.png" width="800px" alt="Control Strategy Comparison">
-
-
-
-
-
-<em>Fig 4.3: 不同控制策略下的轨迹与载荷曲线对比</em>
+    <img src="assets/exp03Fig02AB.png" width="600px" alt="Perception Result">
+    <br>
+    <em>图9: APF自主干扰规避结果（高安全代价与过度机动）。垂直和水平红色虚线分别表示集群进入时间和任务需求基线。</em>
 </div>
+
+<div align="center">
+    <img src="assets/exp03Fig03AB.png" width="600px" alt="Perception Result">
+    <br>
+    <em>图10: 基于$R(t)$的主动弹性最优控制结果（控制振荡与载荷保护不足）。垂直和水平红色虚线分别表示集群进入时间和任务需求基线。</em>
+</div>
+
+<div align="center">
+    <img src="assets/exp03Fig04AB.png" width="600px" alt="Perception Result">
+    <br>
+    <em>图11: 基于$\sigma(t)$的主动弹性最优控制结果（平滑性、载荷与效率的最优平衡）。垂直和水平红色虚线分别表示集群进入时间和任务需求基线。</em>
+</div>
+
+下表从任务完成时间、有效载荷变化情况、控制策略触发次数以及任务韧性指标满足情况多个维度对四种控制策略进行了对比分析。
+实验结果表明：所提出的策略实现了最高的有效载荷下限（21.77）和最低的控制触发次数（867）。
+关键的是，它保持了相对较短的任务完成时间（1294.7~s），仅比理论下界（无控制）长1.25\%。
+这验证了我们框架的核心逻辑：
+通过将动态性能因子$\sigma(t)$作为实时被控变量进行精确调节，系统隐式地确保综合弹性$R(t)$在整个任务期间保持在安全基线$R^* $之上。
+这证实了锚定$\sigma(t)$的控制成功实现了 **"韧性需求"与"控制效率"之间的权衡优化**，以边际效率代价实现了高的任务韧性。
+
+**表：四种控制策略的关键性能指标对比**
+| 控制策略 | 任务完成时间 (s) | 有效载荷范围 | 控制触发次数 | $R(t) \ge R^*$ 满足率 |
+| :--- | :---: | :---: | :---: | :---: |
+| 无控制 | 1278.7 | [14.73, 30.00] | 0 | 0% |
+| APF控制 | 1321.9 | [27.88, 30.00] | 2416 | 100% |
+| $R(t)$控制 | 1293.2 | [18.28, 30.00] | 2279 | 40% |
+| **$\sigma(t)$控制（提出）** | **1294.7** | **[21.77, 30.00]** | **867** | **100%** |
 
 ---
 
