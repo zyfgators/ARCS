@@ -127,108 +127,148 @@ ARCS employs a modular design, precisely mapping the paper's algorithms to the g
 
 ## 🧩 3. Core Algorithms & Implementation
 
-This section details the engineering implementation of the ARCS core modules, strictly following the **"Perception-Metric-Control"** closed-loop theoretical framework.
+This section provides a detailed analysis of the engineering implementation of the ARCS core modules. The code structure strictly follows the **"Perception-Metric-Control"** closed-loop theoretical framework.
 
 ### 3.1 Simulation Engine Architecture: Closed-Loop Scheduling Mechanism
-**Core Module:** ResilenceSim.m (Simulation Engine)
+**Core Module**: `ResilenceSim.m` (Simulation Engine)
 
-ResilenceSim.m is the core scheduler of the entire simulation system, coordinating data exchange among sub-modules.
+`ResilenceSim.m` is the core scheduler of the entire simulation system, coordinating data exchange between various sub-modules.
 
-System Dataflow Diagram:
+**System Dataflow**:
 
-<div align="center"> <img src="assets/systemFlowchart_EN.png" width="80%" alt="systemDataflow">
+<div align="center">
+    <img src="assets/systemFlowchart_CN.png" width="80%" alt="systemDataflow">
+    <br>
+    <em>Figure 4: ARCS Simulation Engine System Dataflow (ARCS Simulation Engine Architecture)</em>
+</div>
 
-<em>Figure 4: ARCS Simulation Engine System Flowchart</em> </div>
-
-### 3.2 Collaborative Perception Layer: STCL-NN Module
-
+### 3.2 Collaborative Perception Layer: STCL-NN Module Implementation
 **Module Correspondence**: `Modules/STCL_NN_Real.m`
 
-To solve interference source localization in high-noise environments, this project implements the **STCL-NN** module. It adopts a **"Physics-Guided" Hybrid Architecture**.
+To solve the interference source localization problem in strong noise environments, this project implements the **STCL-NN (Spatiotemporal Collaborative Learning Neural Network)** module proposed in the paper.
 
-As shown in Fig. 3 (in the Paper), the code strictly follows a three-stage processing pipeline:
+STCL-NN is a novel **feedforward neural network based on mechanism weighting**.
 
-#### 3.2.1 Stage 1: Distributed Feature Extraction & Spatiotemporal Compression
+Unlike deep learning models that rely on backpropagation (BP) for parameter iteration, STCL-NN returns to the essence of neural network **"layered information processing"**, achieving training-free perception through **structural isomorphism** and **mechanism embedding**:
 
-The code constructs a feature extractor based on **Sliding Window Convolution Operators**.
+* **Topology**: Completely retains the multi-layer feedforward structure of deep neural networks: **"Convolutional Feature Extraction $\to$ Attention Screening $\to$ Nonlinear Regression"**.
+* **Weighting**: Abandons high-cost data training and directly maps physical field equations (spatiotemporal integration, attenuation consistency) to the network layer's **fixed weights and activation operators**.
+
+This design possesses both the powerful **nonlinear mapping capability** of neural networks and the **full interpretability** of physical models, making it a typical practice of the "AI for Science" concept in the field of swarm perception.
+
+As shown in Figure 3 (Fig. 3 in Paper), the code strictly follows the three-stage processing pipeline:
+
+#### 3.2.1 Stage 1: Distributed Feature Extraction and Spatiotemporal Compression
+The paper proposes using a lightweight CNN for "spatiotemporal collaborative compression trajectory" mapping. At the code implementation level, a feature extractor based on **sliding window convolution operators** is constructed to capture gradient changes in local signals.
 
 | Paper Term | Code Function | Mechanism Analysis |
-| --- | --- | --- |
-| **Gated Acquisition** | `STCL_NN_Real` | **Gated Mechanism**: Introduces `MIN_ATTENUATION` threshold; activates recording only when signal exceeds noise floor. |
-| **CNN Feature Compression** | `optimizedSlidingWindow` | **Spatiotemporal Convolution**: Uses sliding windows to extract cumulative energy and trend slopes, mapping raw data to "Spatiotemporal Collaborative Compression Trajectories". |
+| :--- | :--- | :--- |
+| **Gated Acquisition** | `STCL_NN_Real`<br>(Main Loop) | **Gated Acquisition Mechanism**: <br>Introduces `MIN_ATTENUATION` threshold judgment, activating recording only when the monitored signal strength exceeds the noise floor, corresponding to the event-triggering mechanism in the paper. |
+| **CNN Feature Compression** | `optimizedSlidingWindow` | **Spatiotemporal Convolution**: <br>Uses a sliding window to execute convolution operations along the time dimension. This process extracts cumulative energy and trend slopes within the window, mapping raw physical data to the "Spatiotemporal Collaborative Compression Trajectory" described in the paper. |
 
 #### 3.2.2 Stage 2: Attention-based Collaborative Sample Screening
-
-The code implements a soft screening strategy based on **Attention Mechanisms**.
-
-| Paper Term | Code Function | Mechanism Analysis |
-| --- | --- | --- |
-| **Feature Embedding** | `calculateWindowConfidence` | **Feature Embedding**: Extracts **Consistency Features** (Physical decay conformity) and **Spatial Features** (Geometric diversity). |
-| **Attention Selection** | `selectDiverse...Points` | **Attention Screening**: Calculates "Information Confidence Weight" and uses Top-M strategy to construct high-confidence datasets. |
-
-#### 3.2.3 Stage 3: Nonlinear Identification & Confidence Evaluation
-
-Regresses to the physical model to complete precise inversion.
+To eliminate NLOS noise and outliers, the code implements a soft screening strategy based on **Attention Mechanism**, achieving data purification by calculating confidence weights of multi-dimensional features.
 
 | Paper Term | Code Function | Mechanism Analysis |
-| --- | --- | --- |
-| **MLE Solution** | `nonlinearLeastSquaresFit` | **MLE Solver**: Uses **LM Algorithm** to iteratively solve the nonlinear least squares problem for parameter . |
-| **Confidence** | `calculateFinalConfidence` | **Multi-dimensional Confidence**: Synthesizes fitting residuals and spatial configuration to generate global confidence . |
+| :--- | :--- | :--- |
+| **Feature Embedding** | `calculateWindowConfidence` | **Feature Embedding**: <br>The code extracts two types of high-dimensional features to calculate attention scores: <br>1. **Consistency Features**: The degree to which signal attenuation conforms to physical laws; <br>2. **Spatial Features**: The geometric distribution diversity of sampling points. |
+| **Attention Selection** | `selectDiverseHighConfidencePoints` | **Attention Screening**: <br>Calculates the "Information Confidence Weight" for each sampling point. Based on the Top-M strategy described in the paper, the code dynamically screens the top $M$ frames of data with the highest confidence to construct a High-confidence Dataset. |
+
+#### 3.2.3 Stage 3: Nonlinear Identification and Confidence Evaluation
+This stage reverts to the physical model to complete the precise inversion from feature space to physical parameters.
+
+| Paper Term | Code Function | Mechanism Analysis |
+| :--- | :--- | :--- |
+| **MLE Solution** | `nonlinearLeastSquaresFit` | **MLE Solver**: <br>Based on the screened dataset, uses the **LM (Levenberg-Marquardt)** algorithm to iteratively solve the nonlinear least squares problem, rapidly converging to obtain the optimal interference parameters $\hat{\xi}$. |
+| **Confidence Quantification** | `calculateFinalConfidence` | **Multi-dimensional Confidence Quantification**: <br>Synthesizes MLE fitting residuals (model conformity) and spatial geometric configuration (observation completeness) to generate a global confidence score $C \in [0,1]$, directly driving subsequent resilience control decisions. |
 
 ---
 
-### 3.3 Dynamic Metric Layer: Damage Dynamics & Resilience
+### 3.3 Dynamic Metric Layer: Damage Dynamics & Resilience Calculation
+**Module Correspondence**: `Modules/calcResilience.m` (Core Algorithm) & `ResilenceSim.m` (Scheduling)
+**Paper Section**: Section 2.2 (Metric Layer)
 
-**Module Correspondence**: `Modules/calcResilience.m`
+This module is responsible for establishing the dynamic mapping between "physical interference" and "task capability". To address the lag problem of traditional static indicators, the code implements a **predictive metric framework based on "Ghost Simulation"**.
 
 #### 3.3.1 Damage Dynamics Equation
-
 The code implements the differential equation described in Eq. (14) of the paper:
+$$\frac{\mathrm{d}\eta}{\mathrm{d}t} = -\beta \cdot [C(t) \cdot \hat{s}(t)] \cdot \eta(t) - \gamma \cdot \eta(t)$$
 
+**Core Logic**: Mapping physical field intensity to irreversible capability loss.
 
-* **Logic**: Uses discrete Euler method.  corresponds to the damage coefficient, and  corresponds to perception confidence.
+| Paper Term | Code Function | Mechanism Analysis |
+| :--- | :--- | :--- |
+| **Damage Evolution**<br>(Eq. 14) | `updateDamageFactors` | **Discretized Euler Integration**: <br>The code implements the numerical solution of the differential equation via `newDamage = currentDamage + (damageRate - recoveryRate) * dt`. Here, `damageRate` is deeply coupled with **perception confidence** (`Ck`) and **physical field intensity** (`interferenceStrength`), achieving a robust design where "updates are moderate if perception is inaccurate". |
+| **Self-Recovery** | `initializeDamageParameters` | **Elastic Recovery Mechanism**: <br>Introduces the `gamma_recovery` parameter to simulate the system's self-repair capability. The code logic ensures that after flying away from the interference zone, system capability recovers exponentially, consistent with physical reality. |
 
-#### 3.3.2 Dynamic Performance Factor
+#### 3.3.2 Model Prediction-based Performance Factor $\sigma(t)$
+**Core Logic**: Fusing "historical observation" and "future prediction" to construct a forward-looking state variable.
 
-* **Logic**: Calculates the real-time performance factor . The code fuses historical observations with future predictions to evaluate the current capability margin.
+The code does not use simple linear extrapolation but constructs an **accelerated predictor** (`predictFuturePayloads`). This predictor utilizes the currently perceived interference model parameters $\hat{\xi}$ to deduce the swarm's future survival state in a virtual space-time.
 
----
+| Paper Term | Code Function | Mechanism Analysis |
+| :--- | :--- | :--- |
+| **Active Prediction**<br>(Model Predictive) | `predictFuturePayloads` | **"Simulation-based" Finite Horizon State Extrapolation**: <br>1. **Predictive Simulation Step**: Uses `predDt = 5 * dt` for coarse-grained rapid deduction; <br>2. **Virtual Mapping**: Reconstructs a virtual interference field using the **estimated parameters** ($\hat{\alpha}, \hat{\beta}, \hat{d_0}$) output by the perception layer; <br>3. **Dynamic Termination**: Automatically stops when the virtual swarm flies out of the interference zone or reaches the maximum prediction horizon (`maxPredictionTime`). |
+| **Dynamic Weighted Fusion**<br>(Eq. 18) | `calculateResilienceMetrics` | **Confidence Gated Fusion**: <br>The calculation formula for $\sigma(t)$ is as follows: <br>`sigma = ((1-conf)*Hist + conf*Pred) / Target`<br>**Mechanism Highlight**: Uses confidence `conf` as a weighting factor. When perception is unreliable, it degrades to relying on historical data; when perception is precise, it favors future prediction, thereby achieving an optimal balance between robustness and foresight. |
 
 ### 3.4 Resilience Control Layer: Multi-Mode Flight Controller
-
 **Module Correspondence**: `Modules/flyController.m`
 
-`flyController.m` integrates three comparison strategies, switchable via `simParams.CtrlMode`.
+`flyController.m` integrates three comparison strategies, switched via `simParams.CtrlMode`.
 
-#### 3.4.1 Benchmark Implementation
-
+#### 3.4.1 Benchmark Algorithm Implementation
 * **C0: Open-loop Baseline**
-* **Param**: `CtrlMode = 0`
-* **Logic**: Maintains formation only, ignores interference. Tests raw lethality.
-
-
+    * **Parameter**: `CtrlMode = 0`
+    * **Logic**: Retains formation keeping only, does not evade interference, tests raw lethality.
 * **C1: Artificial Potential Field (APF)**
-* **Param**: `CtrlMode = 1`
-* **Logic**: Traditional reactive avoidance generating virtual repulsive forces.
-
-
+    * **Parameter**: `CtrlMode = 1`
+    * **Logic**: Traditional reactive obstacle avoidance, generating virtual repulsive forces.
 
 #### 3.4.2 Proposed Algorithm: PMP Active Resilience Control
+* **Mode Parameter**: `simParams.CtrlMode = 3`
+* **Core Mechanism**: **State machine switching** based on $\sigma(t)$ and **differential trend compensation**.
 
-* **Param**: `CtrlMode = 3`
-* **Logic**: Implements the optimal control law based on the ** State Machine**.
+This module implements the optimal control law derived from Eq. (25) in the paper. Distinct from passive threshold triggering, the code introduces the $\dot{\sigma}(t)$ term, achieving **active anticipation and suppression** of performance decay trends.
+
+**1). Control Law Implementation Mechanism Analysis**
+
+| Theoretical Term | Code Logic | Physical Meaning |
+| :--- | :--- | :--- |
+| **PMP Costates ($\lambda_p, \lambda_s$)** | `efficiencyWeight` | **Costate Weight Allocation**: <br>The code discretizes abstract costate variables into piecewise functions of $\sigma(t)$, dynamically adjusting the weights of task and survival. |
+| **Active Trend Prediction** | `sigma_dot > 0` | **Differential Feedforward (D-Term)**: <br>When a performance recovery trend is detected, efficiency weight is actively released. This corresponds to the anticipatory characteristic of costate equations evolving backward in time. |
+| **Hamiltonian Min ($u^*$)** | `desiredDir` | **Optimal Heading Synthesis**: <br>Synthesizes the optimal control variable $u^*$ at the current moment through vector weighting, i.e., finding the optimal tangent point on the Pareto frontier. |
+
+**2). Core Implementation Snippet**
 
 ```matlab
-% PMP Optimization Logic (Simplified)
-if sigma_t >= sigma0       % Regime A: Efficiency-First
+% --- A. PMP State Machine Weight Solution (PMP State Machine) ---
+% Calculate deviation and rate of change relative to baseline sigma0
+sigma_deviation = sigma_t - sigma0;
+sigma_dot = (sigma_t - prev_sigma) / dt;
+
+% Regime 1: Sufficient Performance (Consume redundancy, accelerate task)
+if sigma_t >= sigma0
     target_efficiency = 0.95; 
-elseif sigma_t >= sigma_l  % Regime B: Resilience-Critical
-    delta_sigma = (sigma0 - sigma_t)/(sigma0 - sigma_l);
-    target_efficiency = max(0.55, 0.85 - 0.3*delta_sigma); 
+
+% Regime 2: Critical Resilience (Dynamic balance, PMP linear mapping)
+elseif sigma_t >= sigma_l 
+    delta_sigma = (sigma0 - sigma_t) / (sigma0 - sigma_l);
+    target_efficiency = max(0.55, 0.85 - 0.3 * delta_sigma); 
+
+% Regime 3: Emergency Protection (Bottom-line priority)
+else 
+    target_efficiency = 0.45; 
 end
 
+% --- B. Active Trend Compensation ---
+% Key Innovation: If performance is recovering (sigma_dot > 0), release efficiency weight early
+% This simulates the dynamic prediction characteristic of PMP costate variables, preventing "excessive avoidance"
+if sigma_dot > 0 && sigma_t < sigma0
+    alpha = 0.6; % Pre-adjustment coefficient
+    target_efficiency = target_efficiency + alpha * sigma_dot * (1.0 - target_efficiency);
+    target_efficiency = min(0.95, target_efficiency); 
+end
 ```
-
 ---
 
 ## 📊 4. ARCS Benchmark

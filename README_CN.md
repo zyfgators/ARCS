@@ -143,67 +143,70 @@ ARCS 采用模块化设计，将论文算法精准映射到通用框架中（如
 
 **模块对应**：`Modules/STCL_NN_Real.m`
 
-为了解决强噪声环境下的干扰源定位问题，本项目实现了论文提出的 **STCL-NN** 模块。该模块采用**"物理引导（Physics-Guided）"的混合架构**。
+为了解决强噪声环境下的干扰源定位问题，本项目实现了论文提出的 **STCL-NN (Spatiotemporal Collaborative Learning Neural Network)** 模块。
+
+STCL-NN 是一种**基于机理赋权的新型前馈神经网络**。
+不同于依赖反向传播（BP）进行参数迭代的深度学习模型，STCL-NN 回归了神经网络 **"分层信息处理"** 的本质，通过**结构同构**与**机理嵌入**实现了免训练感知：
+
+* **拓扑结构（Topology）**：完全保留了深度神经网络的 **"卷积特征提取 $\to$ 注意力筛选 $\to$ 非线性回归"** 的多层前馈结构。
+* **权重生成（Weighting）**：摒弃了高代价的数据训练，直接将物理场方程（时空积分、衰减一致性）映射为网络层的 **固定权重与激活算子**。
+
+这种设计既具备了神经网络强大的**非线性映射能力**，又拥有物理模型的**完全可解释性**，是"AI for Science"理念在集群感知领域的典型实践。
 
 如图 3 (Fig. 3 in Paper) 所示，代码严格遵循三阶段处理流水线：
 
 #### 3.2.1 Stage 1: 分布式特征提取与时空压缩
 
-代码构建了基于**滑动窗口卷积算子**的特征提取器。
+论文提出利用轻量级 CNN 进行"时空协同压缩轨迹"映射。在代码实现层面，构建了基于**滑动窗口卷积算子**的特征提取器，以捕捉局部信号的梯度变化。
 
 | 论文概念 (Paper Term) | 源码函数 (Code Function) | 实现机制解析 (Mechanism) |
-| --- | --- | --- |
-| **Gated Acquisition** | `STCL_NN_Real` | **门控采集机制**：<br>
-
-<br>引入 `MIN_ATTENUATION` 阈值，仅当信号超过底噪时激活记录。 |
-| **CNN Feature Compression** | `optimizedSlidingWindow` | **时空卷积 (Convolution)**：<br>
-
-<br>利用滑动窗口提取累积能量与趋势斜率，映射为"时空协同压缩轨迹"。 |
+| :--- | :--- | :--- |
+| **Gated Acquisition** | `STCL_NN_Real`<br>(Main Loop) | **门控采集机制**：<br>引入 `MIN_ATTENUATION` 阈值判断，仅当监测信号强度超过底噪时激活记录，对应论文中的事件触发机制。 |
+| **CNN Feature Compression** | `optimizedSlidingWindow` | **时空卷积 (Convolution)**：<br>利用滑动窗口沿时间维度执行卷积操作 (Convolution Operation)。该过程提取了窗口内的累积能量与趋势斜率，将原始物理数据映射为论文所述的 "Spatiotemporal Collaborative Compression Trajectory"。 |
 
 #### 3.2.2 Stage 2: 基于注意力的协同样本筛选
 
-代码实现了一套基于 **注意力机制** 的软筛选策略。
+为了剔除 NLOS 噪声和离群点，代码实现了一套基于 **注意力机制 (Attention Mechanism)** 的软筛选策略，通过计算多维特征的置信度权重来实现数据净化。
 
 | 论文概念 (Paper Term) | 源码函数 (Code Function) | 实现机制解析 (Mechanism) |
-| --- | --- | --- |
-| **Feature Embedding** | `calculateWindowConfidence` | **特征嵌入**：<br>
-
-<br>提取 **一致性特征** (衰减规律符合度) 和 **空间特征** (几何分布多样性)。 |
-| **Attention Selection** | `selectDiverse...Points` | **注意力筛选**：<br>
-
-<br>计算"信息置信度权重"，结合 Top-M 策略构建高可信数据集。 |
+| :--- | :--- | :--- |
+| **Feature Embedding** | `calculateWindowConfidence` | **特征嵌入**：<br>代码提取了两类高维特征用于计算注意力得分：<br>1. **一致性特征** (Consistency)：信号衰减符合物理规律的程度；<br>2. **空间特征** (Spatial Layout)：采样点的几何分布多样性。 |
+| **Attention Selection** | `selectDiverseHighConfidencePoints` | **注意力筛选**：<br>计算每个采样点的 "Information Confidence Weight"。基于论文描述的 Top-M 策略，代码动态筛选出置信度最高的 $M$ 帧数据，构建高可信数据集 (High-confidence Dataset)。 |
 
 #### 3.2.3 Stage 3: 非线性辨识与置信度评估
 
-回归物理模型，完成精确反演。
+该阶段回归物理模型，完成从特征空间到物理参数的精确反演。
 
 | 论文概念 (Paper Term) | 源码函数 (Code Function) | 实现机制解析 (Mechanism) |
-| --- | --- | --- |
-| **MLE Solution** | `nonlinearLeastSquaresFit` | **MLE 求解器**：<br>
-
-<br>使用 **LM 算法** 迭代求解非线性最小二乘问题，得到参数 。 |
-| **Confidence** | `calculateFinalConfidence` | **多维置信度量化**：<br>
-
-<br>综合拟合残差和空间构型，生成全局置信度 。 |
+| :--- | :--- | :--- |
+| **MLE Solution** | `nonlinearLeastSquaresFit` | **MLE 求解器**：<br>基于筛选后的数据集，使用 **LM (Levenberg-Marquardt)** 算法迭代求解非线性最小二乘问题，快速收敛得到最优干扰参数 $\hat{\xi}$。 |
+| **Confidence Quantification** | `calculateFinalConfidence` | **多维置信度量化**：<br>综合 MLE 拟合残差（模型符合度）和空间几何构型（观测完备性），生成全局置信度分数 $C \in [0,1]$，直接驱动后续的韧性控制决策。 |
 
 ---
 
 ### 3.3 动态度量层：损伤动力学与韧性计算
-
-**模块对应**：`Modules/calcResilience.m`
-
+**模块对应**：`Modules/calcResilience.m` (核心算法) & `ResilenceSim.m` (调度)
+**论文章节**：Section 2.2 (Metric Layer)
+本模块负责建立"物理干扰"与"任务能力"之间的动态映射。为了解决传统静态指标滞后的问题，代码实现了一套**基于"幽灵仿真"的预测性度量框架**。
 #### 3.3.1 损伤动力学方程 (Damage Dynamics)
-
 代码实现了论文 Eq. (14) 描述的微分方程：
 $$ \frac{\mathrm{d}\eta}{\mathrm{d}t} = -\beta \cdot [C(t) \cdot \hat{s}(t)] \cdot \eta(t) - \gamma \cdot \eta(t) $$
+**核心逻辑**：将物理场强度映射为不可逆的能力损耗。
 
-* **实现逻辑**: 采用离散化 Euler 方法。其中  对应损伤系数， 对应感知置信度。
+| 论文概念 (Paper Term) | 源码函数 (Code Function) | 实现机制解析 (Mechanism) |
+| :--- | :--- | :--- |
+| **Damage Evolution**<br>(Eq. 14) | `updateDamageFactors` | **离散化 Euler 积分**：<br>代码通过 `newDamage = currentDamage + (damageRate - recoveryRate) * dt` 实现微分方程的数值解。其中 `damageRate` 深度耦合了**感知置信度** (`Ck`) 与**物理场强度** (`interferenceStrength`)，实现了"感知不准则不过度更新"的鲁棒设计。 |
+| **Self-Recovery** | `initializeDamageParameters` | **弹性恢复机制**：<br>引入 `gamma_recovery` 参数模拟系统的自修复能力。代码逻辑确保了在飞离干扰区后，系统能力可按指数规律回升，符合物理实际。 |
 
-#### 3.3.2 动态性能因子 (Dynamic Performance Factor)
+#### 3.3.2 基于模型预测的性能因子 $\sigma(t)$
+**核心逻辑**：融合"历史观测"与"未来预测"，构建具有前瞻性的状态变量。
 
-* **实现逻辑**: 计算论文定义的实时性能因子 。代码融合了历史观测与未来预测，评估当前时刻的能力余量。
+代码并没有使用简单的线性外推，而是构建了一个**加速预测器** (`predictFuturePayloads`)。该预测器利用当前感知的干扰模型参数 $\hat{\xi}$，在虚拟时空中推演集群未来的生存状态。
 
----
+| 论文概念 (Paper Term) | 源码函数 (Code Function) | 实现机制解析 (Mechanism) |
+| :--- | :--- | :--- |
+| **Active Prediction**<br>(Model Predictive) | `predictFuturePayloads` | **"基于仿真"的有限时域状态外推**：<br>1. **预测仿真步长**：采用 `predDt = 5 * dt` 进行粗粒度快速推演；<br>2. **虚拟映射**：利用感知层输出的**估计参数** ($\hat{\alpha}, \hat{\beta}, \hat{d_0}$) 重构虚拟干扰场；<br>3. **动态终止**：当虚拟集群飞离干扰区或达到最大预测时域 (`maxPredictionTime`) 时自动停止。 |
+| **Dynamic Weighted Fusion**<br>(Eq. 18) | `calculateResilienceMetrics` | **置信度门控融合**：<br>$\sigma(t)$ 的计算公式如下：<br>`sigma = ((1-conf)*Hist + conf*Pred) / Target`<br>**机制亮点**：利用置信度 `conf` 作为权重因子。当感知不可靠时退化为依赖历史数据，当感知精确时偏重未来预测，从而实现鲁棒性与前瞻性的最优平衡。 |
 
 ### 3.4 韧性控制层：多模式飞行控制器
 
@@ -222,24 +225,51 @@ $$ \frac{\mathrm{d}\eta}{\mathrm{d}t} = -\beta \cdot [C(t) \cdot \hat{s}(t)] \cd
 * **参数**: `CtrlMode = 1`
 * **逻辑**: 传统的反应式避障，产生虚拟排斥力。
 
-
-
 #### 3.4.2 提议算法：PMP 主动韧性控制 (Proposed PMP Control)
+* **模式参数**: `simParams.CtrlMode = 3`
+* **核心机制**: 基于 $\sigma(t)$ 的**状态机切换**与**微分趋势补偿**。
 
-* **参数**: `CtrlMode = 3`
-* **逻辑**: 实现了基于 ** 状态机** 的最优控制律。
+本模块实现了论文 Eq. (25) 推导的最优控制律。区别于被动的阈值触发，代码引入了 $\dot{\sigma}(t)$ 项，实现了对性能衰减趋势的**主动预判与抑制**。
+
+**1). 控制律实现机制解析 (Mechanism Analysis)**
+
+| 理论概念 (Theoretical Term) | 源码逻辑 (Code Logic) | 物理含义 (Physical Meaning) |
+| :--- | :--- | :--- |
+| **PMP Costates ($\lambda_p, \lambda_s$)** | `efficiencyWeight` | **协态权值分配**：<br>代码将抽象的协态变量离散化为 $\sigma(t)$ 的分段函数，动态调节任务与生存的权重。 |
+| **Active Trend Prediction** | `sigma_dot > 0` | **微分前馈 (D-Term)**：<br>当检测到性能回升趋势时，主动释放效率权重。这对应了协态方程随时间反向演化的预判特性。 |
+| **Hamiltonian Min ($u^*$)** | `desiredDir` | **最优航向合成**：<br>通过向量加权合成当前时刻的最优控制量 $u^*$，即寻找帕累托前沿上的最优切点。 |
+
+**2). 核心逻辑源码片段 (Core Implementation Snippet)**
 
 ```matlab
-% PMP Optimization Logic (Simplified)
-if sigma_t >= sigma0       % Regime A: Efficiency-First
+% --- A. PMP 状态机权值求解 (PMP State Machine) ---
+% 计算相对于基线 sigma0 的偏差与变化率
+sigma_deviation = sigma_t - sigma0;
+sigma_dot = (sigma_t - prev_sigma) / dt;
+
+% Regime 1: 性能充裕 (消耗冗余，加速任务)
+if sigma_t >= sigma0
     target_efficiency = 0.95; 
-elseif sigma_t >= sigma_l  % Regime B: Resilience-Critical
-    delta_sigma = (sigma0 - sigma_t)/(sigma0 - sigma_l);
-    target_efficiency = max(0.55, 0.85 - 0.3*delta_sigma); 
+
+% Regime 2: 韧性临界 (动态平衡，PMP 线性映射)
+elseif sigma_t >= sigma_l 
+    delta_sigma = (sigma0 - sigma_t) / (sigma0 - sigma_l);
+    target_efficiency = max(0.55, 0.85 - 0.3 * delta_sigma); 
+
+% Regime 3: 紧急保护 (底线优先)
+else 
+    target_efficiency = 0.45; 
 end
 
+% --- B. 主动趋势补偿 (Active Trend Compensation) ---
+% 关键创新：若性能正在回升 (sigma_dot > 0)，提前释放效率权重
+% 这模拟了 PMP 协态变量的动态预测特性，防止系统"过度避障"
+if sigma_dot > 0 && sigma_t < sigma0
+    alpha = 0.6; % 预调整系数
+    target_efficiency = target_efficiency + alpha * sigma_dot * (1.0 - target_efficiency);
+    target_efficiency = min(0.95, target_efficiency); 
+end
 ```
-
 ---
 
 ## 📊 4. ARCS Benchmark (基准测试)
