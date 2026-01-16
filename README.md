@@ -137,7 +137,7 @@ This section provides a detailed analysis of the engineering implementation of t
 **System Dataflow**:
 
 <div align="center">
-    <img src="assets/systemFlowchart_CN.png" width="80%" alt="systemDataflow">
+    <img src="assets/systemFlowchart_EN.png" width="80%" alt="systemDataflow">
     <br>
     <em>Figure 4: ARCS Simulation Engine System Dataflow (ARCS Simulation Engine Architecture)</em>
 </div>
