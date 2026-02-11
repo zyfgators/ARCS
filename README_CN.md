@@ -375,14 +375,18 @@ ARCS 提供了标准化的实验集，代码集成了论文第 4 章的全流程
 
 ## 📝 5. 引用与致谢
 
-ARCS 是一个开放的科研项目，如果您在研究中使用了本代码库，请引用我们的基础工作：
+ARCS 是一个开放的科研项目，如果您在研究中觉得我们的工作对你们有所帮助，或者使用了本代码库，请引用我们的基础工作：
 
+### BibTeX (For LaTeX Users)
 ```bibtex
-@article{zeng2025active,
+@article{zeng2026active,
   title={Active Resilience Control for UAV Swarms: A Closed-Loop Framework Integrating Collaborative Perception and Dynamic Metrics},
   author={Zeng, Yifan and Zhuang, Xuebin and Li, Jinning and Wu, Meng},
   journal={Reliability Engineering \& System Safety},
-  year={2025}
+  year={2026},
+  publisher={Elsevier},
+  doi={10.1016/j.ress.2026.XXXXXX},
+  note={Accepted for Publication}
 }
 
 ```

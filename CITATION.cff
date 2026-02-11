@@ -1,0 +1,47 @@
+cff-version: 1.2.0
+message: "If you use this software or the ARCS framework in your research, please cite it using the following metadata."
+title: "ARCS: General Simulation Platform for Task Resilience Control of Swarms"
+authors:
+  - family-names: "Zeng"
+    given-names: "Yifan"
+    affiliation: "Sun Yat-sen University"
+    email: "zyfkd@qq.com"
+    orcid: "https://orcid.org/0009-0007-2054-8857"
+  - family-names: "Zhuang"
+    given-names: "Xuebin"
+    affiliation: "Sun Yat-sen University"
+  - family-names: "Li"
+    given-names: "Jinning"
+    affiliation: "Sun Yat-sen University"
+  - family-names: "Wu"
+    given-names: "Meng"
+    affiliation: "Sun Yat-sen University"
+version: 1.0.0
+doi: 10.5281/zenodo.XXXXXXX # 填入你的Zenodo Concept DOI
+date-released: "2026-02-10"
+repository-code: "https://github.com/zyfgators/ARCS"
+keywords:
+  - "UAV Swarms"
+  - "Active Resilience Control"
+  - "Task Resilience Metrics"
+  - "Collaborative Perception"
+  - "PMP Optimal Control"
+license: MIT
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Zeng"
+      given-names: "Yifan"
+    - family-names: "Zhuang"
+      given-names: "Xuebin"
+    - family-names: "Li"
+      given-names: "Jinning"
+    - family-names: "Wu"
+      given-names: "Meng"
+  doi: "10.1016/j.ress.2026.XXXXXX" # 填入RESS论文的DOI
+  journal: "Reliability Engineering & System Safety"
+  month: 2
+  title: "Active Resilience Control for UAV Swarms: A Closed-Loop Framework Integrating Collaborative Perception and Dynamic Metrics"
+  year: 2026
+  publisher:
+    name: "Elsevier"

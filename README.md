@@ -374,14 +374,18 @@ Table: Comparison of Key Performance Indicators of Four Control Strategies
 
 ## 📝 5. Citation
 
-ARCS is an open research project. If you use this code or extend new scenarios based on this framework, please cite our foundational work:
+If you find this work helpful for your research, or if you use the ARCS platform as a benchmark for your own algorithms, please cite our foundational paper. Providing a formal citation is the best way to support the ongoing development of this open-source project.
 
+### BibTeX (For LaTeX Users)
 ```bibtex
-@article{zeng2025active,
+@article{zeng2026active,
   title={Active Resilience Control for UAV Swarms: A Closed-Loop Framework Integrating Collaborative Perception and Dynamic Metrics},
   author={Zeng, Yifan and Zhuang, Xuebin and Li, Jinning and Wu, Meng},
   journal={Reliability Engineering \& System Safety},
-  year={2025}
+  year={2026},
+  publisher={Elsevier},
+  doi={10.1016/j.ress.2026.XXXXXX},
+  note={Accepted for Publication}
 }
 
 ```
