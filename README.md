@@ -1,11 +1,22 @@
 # ARCS: General Simulation Platform for Task Resilience Control of Swarms
 
+<div align="left">
+  <img src="https://img.shields.io/badge/MATLAB-R2020b%2B-blue?style=flat-square&logo=mathworks" alt="MATLAB">
+  <img src="https://img.shields.io/badge/Journal-RESS-orange?style=flat-square" alt="RESS">
+  <img src="https://img.shields.io/badge/Status-Accepted-green?style=flat-square" alt="Status">
+  <a href="https://doi.org/10.5281/zenodo.XXXXXXX"><img src="https://img.shields.io/badge/DOI-10.5281%2Fzenodo.XXXXXXX-blue?style=flat-square" alt="DOI"></a>
+  <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square" alt="License">
+</div>
+
 ### (Active Resilience Control for Swarms)
 
 **Defining a General Research Paradigm for Swarm Survivability and Mission Collaboration in Hostile Environments**
 
 > **[English Document](./README.md)** | **[Chinese Document](./README_CN.md)**
-> **Official Implementation**: The paper "Active Resilience Control for UAV Swarms: A Closed-Loop Framework Integrating Collaborative Perception and Dynamic Metrics" (Submitted to *Reliability Engineering & System Safety*).
+
+> **Official Implementation**: The paper "Active Resilience Control for UAV Swarms: A Closed-Loop Framework Integrating Collaborative Perception and Dynamic Metrics" (Accepted for publication in Reliability Engineering & System Safety, February 10, 2026).
+
+> [Archived DOI]: 10.1016/j.ress.2026.XXXXXX (Updated upon publication) | [Code DOI]: 10.5281/zenodo.[Your_Concept_DOI]
 
 ---
 
@@ -31,7 +42,7 @@ The platform abstracts swarm resilience research into a coupled problem of three
 
 1. **Perception Dimension: Interference Perception**
 * **Scientific Challenge**: The essence of complex environments is the presence of **interference fields** with unknown spatiotemporal distributions. Individual agents are limited by observation range and lack distributed collaborative advantages.
-* **Platform Definition**: Utilizing the spatiotemporal distribution characteristics of the swarm, treating it as a "Distributed Sensor Array". ARCS supports various collaborative estimation algorithms (e.g., STCL-NN) to achieve dynamic reconstruction of interference models, parameters, and **Confidence**.
+* **Platform Definition**: Utilizing the spatiotemporal distribution characteristics of the swarm, exploiting the swarm as a spatially distributed sensor aperture. ARCS supports various collaborative estimation algorithms (e.g., STCL-NN) to achieve dynamic reconstruction of interference models, parameters, and **Confidence**.
 
 
 2. **Metric Dimension: Task Capability Metrics**
@@ -41,7 +52,7 @@ The platform abstracts swarm resilience research into a coupled problem of three
 
 3. **Control Dimension: Active Resilience Control**
 * **Scientific Challenge**: Systems often fall into a zero-sum game between "Task Efficacy" and "Task Resilience". Traditional methods often oscillate between passive avoidance (high time cost) or blind traversal (high risk).
-* **Platform Definition**: ARCS establishes the control philosophy of **"Resilience as a State"**. The platform supports designing active resilience control laws that dynamically seek the Pareto Frontier of optimal efficacy while ensuring a minimum capability baseline (resilience constraint).
+* **Platform Definition**: ARCS establishes the control philosophy of **"Resilience as a State"**. The platform supports designing active resilience control laws that dynamically seek the Pareto Frontier of optimal efficacy to arbitrate the fundamental trade-off between mission efficacy and capability preservation.
 
 
 
@@ -212,6 +223,9 @@ The code does not use simple linear extrapolation but constructs an **accelerate
 | **Dynamic Weighted Fusion**<br>(Eq. 18) | `calculateResilienceMetrics` | **Confidence Gated Fusion**: <br>The calculation formula for $\sigma(t)$ is as follows: <br>`sigma = ((1-conf)*Hist + conf*Pred) / Target`<br>**Mechanism Highlight**: Uses confidence `conf` as a weighting factor. When perception is unreliable, it degrades to relying on historical data; when perception is precise, it favors future prediction, thereby achieving an optimal balance between robustness and foresight. |
 
 ### 3.4 Resilience Control Layer: Multi-Mode Flight Controller
+The ARCS platform is designed with a modular control interface. 
+While this implementation utilizes Pontryagin's Minimum Principle (PMP) to solve the optimal resilience control law, the framework inherently supports extension to other advanced methodologies such as Adaptive Control, Robust Control, or Multi-objective Optimization.
+
 **Module Correspondence**: `Modules/flyController.m`
 
 `flyController.m` integrates three comparison strategies, switched via `simParams.CtrlMode`.

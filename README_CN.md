@@ -1,4 +1,13 @@
 # ARCS: 通用集群任务韧性控制仿真平台
+
+<div align="left">
+  <img src="https://img.shields.io/badge/MATLAB-R2020b%2B-blue?style=flat-square&logo=mathworks" alt="MATLAB">
+  <img src="https://img.shields.io/badge/Journal-RESS-orange?style=flat-square" alt="RESS">
+  <img src="https://img.shields.io/badge/Status-Accepted-green?style=flat-square" alt="Status">
+  <a href="https://doi.org/10.5281/zenodo.XXXXXXX"><img src="https://img.shields.io/badge/DOI-10.5281%2Fzenodo.XXXXXXX-blue?style=flat-square" alt="DOI"></a>
+  <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square" alt="License">
+</div>
+
 ### (Active Resilience Control for Swarms)
 
 **定义对抗环境下集群生存与任务协同的通用研究范式**
@@ -209,6 +218,9 @@ $$ \frac{\mathrm{d}\eta}{\mathrm{d}t} = -\beta \cdot [C(t) \cdot \hat{s}(t)] \cd
 | **Dynamic Weighted Fusion**<br>(Eq. 18) | `calculateResilienceMetrics` | **置信度门控融合**：<br>$\sigma(t)$ 的计算公式如下：<br>`sigma = ((1-conf)*Hist + conf*Pred) / Target`<br>**机制亮点**：利用置信度 `conf` 作为权重因子。当感知不可靠时退化为依赖历史数据，当感知精确时偏重未来预测，从而实现鲁棒性与前瞻性的最优平衡。 |
 
 ### 3.4 韧性控制层：多模式飞行控制器
+
+ARCS 平台采用了模块化控制接口设计。
+虽然本版本实现主要利用庞特里亚金极小值原理 (PMP) 来求解最优韧性控制律，但该框架本质上支持扩展至其他先进方法论，如自适应控制、鲁棒控制或多目标优化。
 
 **模块对应**：`Modules/flyController.m`
 
