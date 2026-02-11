@@ -17,7 +17,7 @@ authors:
     given-names: "Meng"
     affiliation: "Sun Yat-sen University"
 version: 1.0.0
-doi: 10.5281/zenodo.XXXXXXX # 填入你的Zenodo Concept DOI
+doi: 10.5281/zenodo.18603927
 date-released: "2026-02-10"
 repository-code: "https://github.com/zyfgators/ARCS"
 keywords:

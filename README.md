@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/MATLAB-R2020b%2B-blue?style=flat-square&logo=mathworks" alt="MATLAB">
   <img src="https://img.shields.io/badge/Journal-RESS-orange?style=flat-square" alt="RESS">
   <img src="https://img.shields.io/badge/Status-Accepted-green?style=flat-square" alt="Status">
-  <a href="https://doi.org/10.5281/zenodo.XXXXXXX"><img src="https://img.shields.io/badge/DOI-10.5281%2Fzenodo.XXXXXXX-blue?style=flat-square" alt="DOI"></a>
+  <a href="https://doi.org/10.5281/zenodo.XXXXXXX"><img src="https://img.shields.io/badge/DOI-10.5281%2Fzenodo.18603927-blue?style=flat-square" alt="DOI"></a>
   <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square" alt="License">
 </div>
 
@@ -16,7 +16,7 @@
 
 > **Official Implementation**: The paper "Active Resilience Control for UAV Swarms: A Closed-Loop Framework Integrating Collaborative Perception and Dynamic Metrics" (Accepted for publication in Reliability Engineering & System Safety, February 10, 2026).
 
-> [Archived DOI]: 10.1016/j.ress.2026.XXXXXX (Updated upon publication) | [Code DOI]: 10.5281/zenodo.[Your_Concept_DOI]
+> [Archived DOI]: 10.1016/j.ress.2026.XXXXXX (Updated upon publication) | [Code DOI]: 10.5281/zenodo.18603927
 
 ---
 
