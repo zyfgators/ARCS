@@ -16,8 +16,7 @@
 
 > **Official Implementation**: The paper "Active Resilience Control for UAV Swarms: A Closed-Loop Framework Integrating Collaborative Perception and Dynamic Metrics" (Accepted for publication in Reliability Engineering & System Safety, February 10, 2026).
 
-> [Archived DOI]: 10.1016/j.ress.2026.XXXXXX (Updated upon publication) | [Code DOI]: 10.5281/zenodo.18603927
-
+> [Archived DOI]: 10.1016/j.ress.2026.112400 | [Code DOI]: 10.5281/zenodo.18603927 
 ---
 
 <div align="center">
@@ -398,4 +397,5 @@ If you have questions about the code, find bugs, or are interested in academic c
 * **Personal Email (Permanent)**: [zyfkd@qq.com](mailto:zyfkd@qq.com) (Recommended)
 * **Academic Email**: [zengyf29@mail2.sysu.edu.cn](mailto:zengyf29@mail2.sysu.edu.cn)
 * **Requirements**: MATLAB R2020b or higher (Pure .m implementation, no toolboxes required).
+
 * **Copyright**: © 2025 School of Systems Science and Engineering, Sun Yat-sen University (SYSU). MIT License.
