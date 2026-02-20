@@ -20,7 +20,7 @@
 >
 > **官方实现**: 论文 "Active Resilience Control for UAV Swarms: A Closed-Loop Framework Integrating Collaborative Perception and Dynamic Metrics" (Accepted for publication in Reliability Engineering & System Safety, February 10, 2026).
 
-> [Archived DOI]: 10.1016/j.ress.2026.XXXXXX (Updated upon publication) | [Code DOI]: 10.5281/zenodo.18603927
+> [Archived DOI]: 10.1016/j.ress.2026.112400 | [Code DOI]: 10.5281/zenodo.18603927
 
 
 ---
@@ -405,5 +405,6 @@ ARCS 是一个开放的科研项目，如果您在研究中觉得我们的工作
 * **版权**：© 2025 中山大学 系统科学与工程学院 (SYSU). 遵循 MIT 协议。
 
 ```
+
 
 ```
