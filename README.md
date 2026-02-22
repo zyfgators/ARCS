@@ -14,7 +14,7 @@
 
 > **[English Document](./README.md)** | **[Chinese Document](./README_CN.md)**
 
-> **Official Implementation**: The paper "Active Resilience Control for UAV Swarms: A Closed-Loop Framework Integrating Collaborative Perception and Dynamic Metrics" (Reliability Engineering & System Safety, https://doi.org/10.1016/j.ress.2026.112400，Available online February 11, 2026).
+> **Official Implementation**: The paper "Active Resilience Control for UAV Swarms: A Closed-Loop Framework Integrating Collaborative Perception and Dynamic Metrics" (Reliability Engineering & System Safety, https://doi.org/10.1016/j.ress.2026.112400 , Available online February 11, 2026).
 
 > [Archived DOI]: 10.1016/j.ress.2026.112400 (Available online 11 February 2026) | [Code DOI]: 10.5281/zenodo.18603927
 
