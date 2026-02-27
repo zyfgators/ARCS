@@ -18,9 +18,9 @@
 
 > **[English Document](./README.md)** | **[Chinese Document](./README_CN.md)**
 >
-> **官方实现**: 论文 "Active Resilience Control for UAV Swarms: A Closed-Loop Framework Integrating Collaborative Perception and Dynamic Metrics" (Reliability Engineering & System Safety, https://doi.org/10.1016/j.ress.2026.112400 , Available online February 11, 2026)
+> **[原创论文]**:Zeng Y F, Zhuang X B, Li J N, Wu M. Active resilience control for UAV swarms: a closed-loop framework integrating collaborative perception and dynamic metrics[J]. Reliab. Eng. Syst. Saf., 2026, 274:112400[2026-10-01]. https://doi.org/10.1016/j.ress.2026.112400
 
-> [Archived DOI]: 10.1016/j.ress.2026.112400 (Available online 11 February 2026) | [Code DOI]: 10.5281/zenodo.18603927
+> [Archived DOI]: 10.1016/j.ress.2026.112400 (October 2026, 274) | [Code DOI]: 10.5281/zenodo.18603927
 
 
 ---
@@ -78,8 +78,7 @@ ARCS 旨在打破单一算法的局限，建立一套通用的**"感知—度量
 * **度量层**：建立了基于**损伤动力学方程**的韧性度量模型。
 * **控制层**：设计了基于 **PMP (庞特里亚金极小值原理)** 的最优控制器。
 
-> **[1]** *Zeng Y, Zhuang X, Li J, et al. Active Resilience Control for UAV Swarms: A Closed-Loop Framework Integrating Collaborative Perception and Dynamic Metrics. Reliability Engineering & System Safety, 2025 (Under Review).*
-
+> **[1]** *Zeng, Y.F., Zhuang, X.B., Li, J.N., et al. Active Resilience Control for UAV Swarms: A Closed-Loop Framework Integrating Collaborative Perception and Dynamic Metrics. Reliability Engineering & System Safety, 2026, 274. https://doi.org/10.1016/j.ress.2026.112400*
 ---
 
 ## 🏗️ 2. 典范实例构建：基础场景与框架实现
@@ -382,14 +381,16 @@ ARCS 是一个开放的科研项目，如果您在研究中觉得我们的工作
 
 ### BibTeX (For LaTeX Users)
 ```bibtex
-@article{zeng2026active,
+@article{zeng2026activeResilienceControl,
   title={Active Resilience Control for UAV Swarms: A Closed-Loop Framework Integrating Collaborative Perception and Dynamic Metrics},
   author={Zeng, Yifan and Zhuang, Xuebin and Li, Jinning and Wu, Meng},
   journal={Reliability Engineering \& System Safety},
   year={2026},
-  publisher={Elsevier},
+  month={oct}, 
+  volume={274},
+  pages={112400},
   doi={10.1016/j.ress.2026.112400},
-  note={Available online 11 February 2026}
+  publisher={Elsevier}
 }
 
 ```
