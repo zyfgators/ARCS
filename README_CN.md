@@ -335,7 +335,7 @@ ARCS 提供了标准化的实验集，代码集成了论文第 4 章的全流程
 
 各种控制策略的飞行轨迹图和任务韧性性能指标可参见图8~图11，详情可参见基础论文[1]。
 <div align="center">
-    <img src="assets/exp02Fig02B.png" width="600px" alt="Perception Result">
+    <img src="assets/exp03Fig01AB.png" width="600px" alt="Perception Result">
     <br>
     <em>图8: 无控制实验结果（高效率但严重载荷损失）。垂直和水平红色虚线分别表示集群进入时间和任务需求基线。</em>
 </div>
