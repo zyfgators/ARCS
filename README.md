@@ -332,7 +332,7 @@ Validates the fidelity and predictive capability of the Damage Dynamics model.
 
 The flight trajectories and mission resilience performance indicators of various control strategies are shown in Figures 8~11. 
 For details, please refer to the foundational paper [1].
-<div align="center"><img src="assets/exp02Fig02B.png" width="600px" alt="Perception Result">
+<div align="center"><img src="assets/exp03Fig01AB.png" width="600px" alt="Perception Result">
     <em>Figure 8: No control experiment results (high efficiency but severe payload loss). 
 Vertical and horizontal red dashed lines indicate swarm entry time and mission requirement baseline respectively.</em>
 </div>
